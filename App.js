@@ -38,6 +38,9 @@ export default function App() {
               case "New":
               iconName = focused ? 'ios-add-circle' : 'ios-add-circle-outline';
               break;
+              case "Barcodes":
+              iconName = focused ? 'ios-cloud-upload' : 'ios-cloud-upload-outline';
+              break;
               case "Products":
               iconName = focused ? 'ios-clipboard' : 'ios-clipboard-outline';
               break;

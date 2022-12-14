@@ -6,6 +6,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import EditProduct from './products-screen/Edit-Product';
 
+// TODO: Если 0 элементов то рендерится кнопка добавить новый, ведущая на New страничку
+
 const Item = ({ title, barcode, itemId, bestBeforeDate, image, rerenderItems, navigateToEditPage }) => {
 
   const deleteItem = (id) => {
@@ -95,11 +97,20 @@ const Items = (props) => {
 
   const renderDefaultScreen = (props) => {
     return (<SafeAreaView style={styles.container}>
-      { dataToRender.length >= 1 && <FlatList
+      { dataToRender.length >= 1 
+      ? 
+      <FlatList
         data={dataToRender}
         renderItem={({item}) => <Item title={item.title} barcode={item.barcode} itemId={item.id} bestBeforeDate={item.bestBeforeDate} image={item.image} rerenderItems={() => fetchDataFromAsyncStorage()} navigateToEditPage={() => props.navigation.navigate('edit_product', {item: {...item}})}/>}
         keyExtractor={item => item.id}
-      />}
+      /> 
+      : 
+      <View style={styles.centered}>
+        <Pressable style={{alignItems: 'center'}} onPress={() => props.navigation.navigate("New")}>
+          <Ionicons name="ios-add-circle-outline" size={125}/>
+          <Text>Продуктов пока нет, добавьте новые.</Text>
+        </Pressable>
+      </View>}
     </SafeAreaView>)
   }
 
@@ -118,6 +129,11 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 0,
     backgroundColor: 'white'
+  },
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   daysLeft: {
     flex: 1,
