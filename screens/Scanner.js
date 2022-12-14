@@ -7,7 +7,7 @@ import * as Haptics from 'expo-haptics';
 
 const Scanner = (props) => {
 
-    const LOCALHOST_URL = "192.168.1.62:3002";
+    const LOCALHOST_URL = "react-node-api.clefer.ru";
 
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
@@ -38,19 +38,14 @@ const Scanner = (props) => {
     }, []);
 
     const createAlert = (type, data) => {
-      // alert(data + type);
-      // alert(type);
-      // alert(typeof type);
       if(type == 128 || type == 64 || type == 32){
         fetch(`http://${LOCALHOST_URL}/barcodes/get-info-by-barcode/${data}`)
         .then(res => res.json())
         .then(res => {
-          // alert(res.body)
-          Alert.alert(res.message, 'What to do?', res.status == "found" ? [{text: "New product", onPress: () => props.navigation.navigate("New", {barcode: res.body}), style: "cancel"}, {text: 'Cancel', style: "default"}] : [{text: "Add new", onPress: () => props.navigation.navigate("Barcodes", {barcode: data}), style: "cancel"}, {text: 'OK', style: "default"}])
+          Alert.alert(res.message, 'Действие с штрихкодом?', res.status == "found" ? [{text: "Добавить к продукту", onPress: () => props.navigation.navigate("New", {barcode: res.body}), style: "cancel"}, {text: 'Вернуться', style: "default"}] : [{text: "Добавить новый", onPress: () => props.navigation.navigate("Barcodes", {barcode: data}), style: "cancel"}, {text: 'Вернуться', style: "default"}])
         })
-        .catch(err => console.log(err.message))
+        .catch(err => console.log(err))
       }
-      // Alert.alert("Barcode scanned", `Bar code with type ${type} and data ${data} has been scanned!`, [{text: "Add new", style: "cancel"}, {text: 'OK', style: "default"}])
     }
 
   
@@ -58,7 +53,6 @@ const Scanner = (props) => {
       setScanned(true);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       createAlert(type, data);
-      // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
     };
   
     if (hasPermission === null) {

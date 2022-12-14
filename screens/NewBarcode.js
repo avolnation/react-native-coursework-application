@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 
 const NewBarcode = (props) => {
 
-    const localhost_url = "192.168.1.62:3002";
+    const localhost_url = "react-node-api.clefer.ru";
 
     console.log(typeof props.route.params);
 
@@ -33,7 +33,7 @@ const NewBarcode = (props) => {
             title: title, 
             barcode: barcode }
 
-        fetch(`http://${localhost_url}/barcodes/save-barcode`, {
+        fetch(`https://${localhost_url}/barcodes/save-barcode`, {
                 method: "POST", 
                 headers: {"Content-Type": "application/json"}, 
                 body: JSON.stringify(barcodeObject),
