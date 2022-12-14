@@ -1,38 +1,45 @@
-import { StyleSheet, View, Text, TextInput, Button, TouchableOpacity, Image} from "react-native";
+import { StyleSheet, View, Text, TextInput, Alert, TouchableOpacity, Image} from "react-native";
 import { useState, useEffect } from "react";
-import Ionicons from 'react-native-vector-icons/Ionicons';
-// import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
-import DateTimePicker from "@react-native-community/datetimepicker";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as ImagePicker from "expo-image-picker"
+
+
 
 const EditProduct = (props) => {
 
-    const [image, setImage] = useState(null);
+    // State's с свойствами продукта //
+    const [ id, setId] = useState("");
+    const [ image, setImage ] = useState(null);
     const [ text, onChangeText ] = useState("");
-    const [ id, onChangeId] = useState("");
     const [ barcode, onChangeBarcode ] = useState("");
 
-    const [ isActive, setIsActive ] = useState(false);
+    // State's с датами //
     const [ date, setDate ] = useState(new Date());
     const [ dateInMillis, setDateInMillis ] = useState("");
     const [ showDatePicker, setShowDatePicker ] = useState(false);
     const [ dateText, setDateText ] = useState('Выберите дату ->');
 
 
+    // При фокусе экрана получаем необходимые данные из params, если они есть //
     useEffect(() => {
         props.navigation.addListener('focus', () => {
-            onChangeBarcode(props.route.params === undefined ? "" : props.route.params?.item?.barcode);
-            onChangeText(props.route.params === undefined ? "" : props.route.params?.item?.title);
-            onChangeId(props.route.params === undefined ? "" : props.route.params?.item?.id);
-            setDateInMillis(props.route.params === undefined ? "" : props.route.params?.item?.bestBeforeDate);
+
+            setId(props.route.params === undefined ? "" : props.route.params?.item?.id);
             setImage(props.route.params === undefined ? "" : props.route.params?.item?.image)
+            onChangeText(props.route.params === undefined ? "" : props.route.params?.item?.title);
+            onChangeBarcode(props.route.params === undefined ? "" : props.route.params?.item?.barcode);
+
+            setDateInMillis(props.route.params === undefined ? "" : props.route.params?.item?.bestBeforeDate);
+
             const date = new Date(props.route.params?.item?.bestBeforeDate)
             setDateText(date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear())
-            // setIsActive(true)
         })
     })
 
+    // Очищаем на всякий случай поля после потери фокуса экрана//
     useEffect(() => {
         props.navigation.addListener('blur', () => {
             onChangeText("");
@@ -40,6 +47,7 @@ const EditProduct = (props) => {
         })
     })
 
+    // 
     const onDatePickerChange = (e, selectedDate) => {
         setShowDatePicker(!showDatePicker);
         const currentDate = selectedDate || date;
@@ -51,14 +59,15 @@ const EditProduct = (props) => {
         setDateInMillis(tempDate.getTime())
     }
     
+    // Функция редактирования продукта // 
     const editProduct = (id, text, barcode, date, imageUri) => {
         AsyncStorage.setItem(id, JSON.stringify({barcode: barcode, bestBeforeDate: date, id: id, title: text, image: imageUri}), () => {
-            console.log("Saved");
+            Alert.alert("Успешно", "Изменения сохранены", [{text: "Вернуться к продуктам", onPress: () => props.navigation.goBack()}])
         })
     }
 
+    // Функция фото продукта
     const pickImage = async () => {
-        // No permissions request is necessary for launching the image library
         let result = await ImagePicker.launchCameraAsync({
           mediaTypes: ImagePicker.MediaTypeOptions.All,
           allowsEditing: true,
@@ -66,13 +75,13 @@ const EditProduct = (props) => {
           quality: 1,
         });
     
-        console.log(result);
-        console.log(result.assets[0].uri);
+        // console.log(result);
+        // console.log(result.assets[0].uri);
 
-    
         if (!result.canceled) {
           setImage(result.assets[0].uri);
         }
+
       };
         
     
@@ -98,7 +107,7 @@ const EditProduct = (props) => {
             </View>
 
             <View style={styles.controls}>
-                <TouchableOpacity style={styles.button} onPress={() => editProduct(id, text, barcode, dateInMillis, image)}>
+                <TouchableOpacity style={styles.button} onPress={() => editProduct(id, text, barcode, dateInMillis, image) }>
                     <Text style={styles.textInButton}>
                         Сохранить
                     </Text>
@@ -109,12 +118,12 @@ const EditProduct = (props) => {
                     </Text>
                 </TouchableOpacity>
             </View>
-            
             {showDatePicker && <DateTimePicker testId="dateTimePicker" value={date} mode="date" display='default' onChange={onDatePickerChange} />}
         </View>
     )
 }
 
+// Стили
 const styles = StyleSheet.create({
     container: {
         flex: 1,

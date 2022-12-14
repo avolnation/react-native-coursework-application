@@ -6,7 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import EditProduct from './products-screen/Edit-Product';
 
-// TODO: Если 0 элементов то рендерится кнопка добавить новый, ведущая на New страничку
+// TODO: Если 0 элементов то рендерится кнопка добавить новый, ведущая на New страничку (Сделано)
 
 const Item = ({ title, barcode, itemId, bestBeforeDate, image, rerenderItems, navigateToEditPage }) => {
 
@@ -39,9 +39,18 @@ const Item = ({ title, barcode, itemId, bestBeforeDate, image, rerenderItems, na
           {image ? <Image source={{uri: image, width: 40, height: 40}} /> : <Ionicons name="ios-basket" size={40} color="#404040"/>}
           </>
         </View>
-        <View>
-          <Text style={styles.title} numberOfLines={1}>{title}</Text>
-          <Text style={styles.barcode}>{barcode}</Text>
+        <View style={{justifyContent: 'center'}}>
+          {
+            barcode != "" 
+            ?
+            <>
+              <Text style={styles.title} numberOfLines={1}>{title}</Text>
+              <Text style={styles.barcode}>{barcode}</Text>
+            </>
+            :
+            <Text style={styles.title} numberOfLines={1}>{title}</Text>
+          }
+
         </View>
         <View style={styles.daysLeft}>
           <Text style={[styles.daysLeft, dateToDays(bestBeforeDate) < 7 ? styles.textRed  : styles.textGreen]}>{dateToDays(bestBeforeDate) < 0 ? "!!!" : dateToDays(bestBeforeDate)}</Text>

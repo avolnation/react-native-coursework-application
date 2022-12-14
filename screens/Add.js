@@ -91,7 +91,7 @@ const Add = (props) => {
         // Сперва задаём, что ошибок нет //
         let anyErrors = false; 
 
-        // Проверяем переданые переменные на наличие ошибок (Первичная проверка) //
+        // Проверяем переданные переменные на наличие ошибок (Первичная проверка) //
         if(title.trim() == "" || bestBeforeDate == "" || ((bestBeforeDaysOrMonth == null || !Number.isInteger(+bestBeforeDaysOrMonth) || bestBeforeDaysOrMonth.trim() == "") && modeId == "2")){
             // Если проверка прошла, следовательно, задаём в переменную что есть ошибки //
             anyErrors = true; 
@@ -130,14 +130,14 @@ const Add = (props) => {
 
         // Если ошибок нет, то записываем в AsyncStorage продукт, а затем очищаем поля ввода и params из навигации, если они присутствуют // 
         if(!anyErrors){
-                // Генерируем уникальный ключ // 
-                let key = Date.now().toString(36) + Math.random().toString(36).substr(2);
-                // Записываем по ключу все необходимые данные в AsyncStorage //
-                AsyncStorage.setItem('product-' + key, JSON.stringify({title: title, barcode: barcode, bestBeforeDate}), () => {
-                    AsyncStorage.getItem('product-' + key, (err, result) => {
-                        alert(result);
-                    })
-            })
+
+            // Генерируем уникальный ключ // 
+            let key = Date.now().toString(36) + Math.random().toString(36).substr(2);
+
+            // Записываем по ключу все необходимые данные в AsyncStorage //
+            AsyncStorage.setItem('product-' + key, JSON.stringify({title: title, barcode: barcode, bestBeforeDate}), () => {
+                Alert.alert("Успешно", `Продукт был добавлен.`, [{text: "Посмотреть", onPress: () => props.navigation.navigate('Products')}, {text: "Назад"},] );})
+
             // Обнуляем state's и params //
             onChangeText("");
             onChangeBarcode("");
@@ -161,7 +161,7 @@ const Add = (props) => {
         let tempDate = new Date(currentDate);
         let fDate = tempDate.getDate() + '-' + (tempDate.getMonth() + 1) + '-' + tempDate.getFullYear();
 
-        // Записываем в текстовом представлении а так же в виде секунд в соответствующие state
+        // Записываем в текстовом представлении а так же в виде секунд в соответствующие state //
         setDateText(fDate);
         setDateInMillis(tempDate.getTime())
     }
@@ -182,9 +182,9 @@ const Add = (props) => {
                 </Text>
             </TouchableOpacity>
             <RadioGroup 
-            radioButtons={radioButtonsData} 
-            onPress={onChangeDateMode} 
-            containerStyle={{flexDirection: "row"}}
+                radioButtons={radioButtonsData} 
+                onPress={onChangeDateMode} 
+                containerStyle={{flexDirection: "row"}}
             />
             {modeId == "1" 
             ? 
@@ -201,7 +201,7 @@ const Add = (props) => {
                     onChangeText={setBestBeforeDaysOrMonth}
                     placeholder="Срок хранения"
                     defaultValue={bestBeforeDaysOrMonth}/> 
-                <Picker style={{height: 40, width: "50%"}} mode="dialog" selectedValue={daysOrMonth} onValueChange={(value) => setDaysOrMonth(value)}>
+                <Picker style={{height: 40, width: "30%"}} mode="dialog" selectedValue={daysOrMonth} onValueChange={(value) => setDaysOrMonth(value)}>
                     <Picker.Item key="1" label="сут." value="day"></Picker.Item>
                     <Picker.Item key="2" label="мес." value="month"></Picker.Item>
                 </Picker>
@@ -213,12 +213,12 @@ const Add = (props) => {
                     Сохранить
                 </Text>
             </TouchableOpacity>
-            
             {showDatePicker && <DateTimePicker testId="dateTimePicker" value={date} mode="date" display='default' onChange={onDatePickerChange} />}
         </View>
     )
 }
 
+// Стили //
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -226,11 +226,11 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     input: {
-      height: 40,
-      width: "80%",
-      margin: 12,
-      borderWidth: 1,
-      padding: 10,
+        height: 40,
+        width: "80%",
+        margin: 12,
+        borderWidth: 1,
+        padding: 10,
     },
     button: {
         backgroundColor: "lightgray",
@@ -244,7 +244,6 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center"
-        // justifyContent: "space-around"
     },
   });
 
