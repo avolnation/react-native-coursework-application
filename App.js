@@ -24,9 +24,6 @@ export default function App() {
 
   
   return ( 
-    <>
-    { loggedIn 
-      ?
       <NavigationContainer>
       <Tab.Navigator
         screenOptions={({ route }) => ({
@@ -72,11 +69,6 @@ export default function App() {
         />
       </Tab.Navigator>
     </NavigationContainer>
-      : <Auth logIn={logInHandler}/>}
-
-    </>
-    
-
   );
 }
 

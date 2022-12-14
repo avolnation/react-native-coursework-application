@@ -4,55 +4,35 @@ import { useState, useEffect } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { MenuContext } from "react-native-popup-menu";
-const Add = (props) => {
+const EditProduct = (props) => {
 
     const [ text, onChangeText ] = useState("");
+    const [ id, onChangeId] = useState("");
     const [ barcode, onChangeBarcode ] = useState("");
+
     const [ isActive, setIsActive ] = useState(false);
     const [ date, setDate ] = useState(new Date());
     const [ dateInMillis, setDateInMillis ] = useState("");
     const [ showDatePicker, setShowDatePicker ] = useState(false);
     const [ dateText, setDateText ] = useState('No data yet');
 
+
     useEffect(() => {
         props.navigation.addListener('focus', () => {
-            // console.log(props.route.params?.barcode);
-            onChangeBarcode(props.route.params === undefined ? "" : props.route.params?.barcode?.barcode);
-            onChangeText(props.route.params === undefined ? "" : props.route.params?.barcode?.title);
-            setIsActive(true)
+            onChangeBarcode(props.route.params === undefined ? "" : props.route.params?.item?.barcode);
+            onChangeText(props.route.params === undefined ? "" : props.route.params?.item?.title);
+            onChangeId(props.route.params === undefined ? "" : props.route.params?.item?.id);
+            setDateInMillis(props.route.params === undefined ? "" : props.route.params?.item?.bestBeforeDate);
+            // setIsActive(true)
         })
     })
 
     useEffect(() => {
         props.navigation.addListener('blur', () => {
-            setIsActive(false);
-            onChangeBarcode("");
+            onChangeText("");
+            setDateText("");
         })
     })
-
-    const radioButtonsData = [{
-        id: '1',
-        label: 'Expiration date',
-        value: 'option1'
-    }, 
-    {
-        id: '2',
-        label: 'Best before date',
-        value: 'option2'
-    }]
-
-    const newProduct = (title, barcode, bestBeforeDate) => {
-        AsyncStorage.getAllKeys((err, keys) => {
-            let keysLength = keys.length;
-            AsyncStorage.setItem('product-' + keysLength, JSON.stringify({title: title, barcode: barcode, bestBeforeDate}), () => {
-                AsyncStorage.getItem('product-' + keysLength, (err, result) => {
-                    alert(result);
-                })
-            })
-        })
-        
-    }
 
     const onDatePickerChange = (e, selectedDate) => {
         setShowDatePicker(!showDatePicker);
@@ -64,7 +44,13 @@ const Add = (props) => {
         setDateText(fDate);
         setDateInMillis(tempDate.getTime())
     }
-
+    
+    const editProduct = (id, text, barcode, date) => {
+        AsyncStorage.setItem(id, JSON.stringify({barcode: barcode, bestBeforeDate: date, id: id, title: text}), () => {
+            console.log("Saved");
+        })
+    }
+        
     
     return (
         <View>
@@ -73,12 +59,6 @@ const Add = (props) => {
                 onChangeText={onChangeText}
                 placeholder="Item Name"
                 defaultValue={text}
-            />
-            <TextInput
-                style={styles.input}
-                onChangeText={onChangeBarcode}
-                placeholder="Barcode"
-                defaultValue={barcode}
             />
             <Text>{dateText}</Text>
             <TouchableOpacity style={styles.button}>
@@ -92,9 +72,14 @@ const Add = (props) => {
                 </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.button} onPress={() => newProduct(text, barcode, dateInMillis)}>
+            <TouchableOpacity style={styles.button} onPress={() => editProduct(id, text, barcode, dateInMillis)}>
                 <Text>
-                    Add New Product!
+                    Save
+                </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button}>
+                <Text>
+                    Back to products
                 </Text>
             </TouchableOpacity>
             
@@ -120,4 +105,5 @@ const styles = StyleSheet.create({
     }
   });
 
-export default Add;
+
+export default EditProduct;

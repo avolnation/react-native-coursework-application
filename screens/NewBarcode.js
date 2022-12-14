@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 
 const NewBarcode = (props) => {
 
-    const localhost_url = "192.168.0.100:3002";
+    const localhost_url = "192.168.1.62:3002";
 
     console.log(typeof props.route.params);
 

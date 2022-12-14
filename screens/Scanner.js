@@ -7,7 +7,7 @@ import * as Haptics from 'expo-haptics';
 
 const Scanner = (props) => {
 
-    const LOCALHOST_URL = "192.168.0.100:3002";
+    const LOCALHOST_URL = "192.168.1.62:3002";
 
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
@@ -45,8 +45,8 @@ const Scanner = (props) => {
         fetch(`http://${LOCALHOST_URL}/barcodes/get-info-by-barcode/${data}`)
         .then(res => res.json())
         .then(res => {
-          alert(res.body)
-          Alert.alert(res.message, 'What to do?', res.status == "found" ? [{text: "New product", onPress: () => props.navigation.navigate("New", {barcode: res.body}), style: "cancel"}, {text: 'OK', style: "default"}] : [{text: "Add new", onPress: () => props.navigation.navigate("Barcodes", {barcode: data}), style: "cancel"}, {text: 'OK', style: "default"}])
+          // alert(res.body)
+          Alert.alert(res.message, 'What to do?', res.status == "found" ? [{text: "New product", onPress: () => props.navigation.navigate("New", {barcode: res.body}), style: "cancel"}, {text: 'Cancel', style: "default"}] : [{text: "Add new", onPress: () => props.navigation.navigate("Barcodes", {barcode: data}), style: "cancel"}, {text: 'OK', style: "default"}])
         })
         .catch(err => console.log(err.message))
       }
