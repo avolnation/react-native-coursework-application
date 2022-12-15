@@ -1,7 +1,7 @@
-import React from 'react';
-import { ActivityIndicator, StyleSheet, Text, View, Button, Alert } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View, TouchableOpacity, Alert, } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { BarCodeScanner } from 'expo-barcode-scanner';
 import { useEffect, useState } from 'react';
-import { BarCodeScanner } from 'expo-barcode-scanner';    
 import * as Haptics from 'expo-haptics';
 
 
@@ -42,7 +42,7 @@ const Scanner = (props) => {
         fetch(`http://${LOCALHOST_URL}/barcodes/get-info-by-barcode/${data}`)
         .then(res => res.json())
         .then(res => {
-          Alert.alert(res.message, 'Действие с штрихкодом?', res.status == "found" ? [{text: "Добавить к продукту", onPress: () => props.navigation.navigate("New", {barcode: res.body}), style: "cancel"}, {text: 'Вернуться', style: "default"}] : [{text: "Добавить новый", onPress: () => props.navigation.navigate("Barcodes", {barcode: data}), style: "cancel"}, {text: 'Вернуться', style: "default"}])
+          Alert.alert(res.message == "Info by barcode" ? "Штрихкод был найден на сервере" : "Такого штрихкода ещё нет на сервере", res.message == "Info by barcode" ? `Название продукта: ${res.body.title}, добавить это название к новому продукту?` : "На сервере нет информации о данном штрихкоде. Но, вы можете её добавить.", res.status == "found" ? [{text: "Добавить", onPress: () => props.navigation.navigate("Add", {barcode: res.body}), style: "cancel"}, {text: 'Вернуться', style: "default"}] : [{text: "Добавить", onPress: () => props.navigation.navigate("Barcodes", {barcode: data}), style: "cancel"}, {text: 'Вернуться', style: "default"}])
         })
         .catch(err => console.log(err))
       }
@@ -56,10 +56,16 @@ const Scanner = (props) => {
     };
   
     if (hasPermission === null) {
-      return <Text>Requesting for camera permission</Text>;
+      return <>
+        <Ionicons name="ios-build-outline" size={124}></Ionicons>
+        <Text style={{fontWeight: 'bold'}}>Запрос на разрешение доступа к камере</Text>
+        </>;
     }
     if (hasPermission === false) {
-      return <Text>No access to camera</Text>;
+      return <>
+        <Ionicons name="ios-close-outline" size={124}></Ionicons>
+        <Text>Нет доступа к камере</Text>;
+        </>
     }
 
     const scanAgain = (
@@ -68,7 +74,11 @@ const Scanner = (props) => {
                 onBarCodeScanned={scanned ?  undefined : handleBarCodeScanned}
                 style={StyleSheet.absoluteFillObject}
             />}  
-            {scanned && <Button title={'Tap to Scan Again'} onPress={() => setScanned(false)} />}
+            {scanned && 
+              <TouchableOpacity title={'Tap to Scan Again'} onPress={() => setScanned(false)}>
+                <Ionicons name="ios-refresh-outline" size={124}/>
+                <Text style={{fontWeight: 'bold'}}>Сканировать опять</Text>
+              </TouchableOpacity>}
         </>
     )
             
@@ -83,12 +93,15 @@ const Scanner = (props) => {
 }
 
 const styles = StyleSheet.create({
-    container: {
-      position: 'absolute',
-        left: 0,
-        right: 0,
-        top: 0,
-        bottom: 0
+      container: {
+      backgroundColor: 'white',
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0
     },
   });
 

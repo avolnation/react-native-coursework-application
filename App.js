@@ -35,7 +35,7 @@ export default function App() {
               case "Scan":
               iconName = focused ? 'ios-barcode' : 'ios-barcode-outline';
               break;
-              case "New":
+              case "Add":
               iconName = focused ? 'ios-add-circle' : 'ios-add-circle-outline';
               break;
               case "Barcodes":
@@ -48,8 +48,8 @@ export default function App() {
             return <Ionicons name={iconName} size={size} color={color}/>
           }, 
 
-          tabBarActiveTintColor: 'tomato',
-          tabBarInactiveTintColor: 'gray',
+          tabBarActiveTintColor: '#006EDB',
+          tabBarInactiveTintColor: '#9C9C9C',
           headerTitleAlign: "center"
           // headerShown: false
           
@@ -57,18 +57,22 @@ export default function App() {
         <Tab.Screen
           name="Scan"
           component={Scanner}
-          options={{ title: 'Scan' }}
+          options={{ title: 'Отсканировать' }}
         />
         <Tab.Screen 
-          name="New" 
+          name="Add" 
           component={Add} 
+          options={{ title: 'Добавить' }}
         />
         <Tab.Screen 
           name="Barcodes"
-          component={NewBarcode}/>
+          component={NewBarcode}
+          options={{ title: 'Штрихкоды' }}
+        />
         <Tab.Screen 
           name="Products" 
           component={Items} 
+          options={{ title: 'Продукты' }}
         />
       </Tab.Navigator>
     </NavigationContainer>

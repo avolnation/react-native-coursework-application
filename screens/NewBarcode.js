@@ -12,6 +12,10 @@ const NewBarcode = (props) => {
     const [barcode, onChangeBarcode] = useState("");
     const [title, onChangeTitle] = useState("");
 
+    // Ошибки //
+    const [ anyErrors, setAnyErrors ] = useState(false);
+    const [ errorsDescription, setErrorsDescription ] = useState(null);
+
 
     useEffect(() => {
         props.navigation.addListener('focus', () => {
@@ -29,46 +33,85 @@ const NewBarcode = (props) => {
     })
 
     const saveBarcode = ( title, barcode ) => {
-        const barcodeObject = { 
-            title: title, 
-            barcode: barcode }
 
-        fetch(`https://${localhost_url}/barcodes/save-barcode`, {
-                method: "POST", 
-                headers: {"Content-Type": "application/json"}, 
-                body: JSON.stringify(barcodeObject),
+        let anyErrors = false;
+
+        let errorsDescription = [];
+
+        if(title.trim() == "" || (barcode.trim() == "" || !Number.isInteger(+barcode) || (barcode.length < 13 || barcode.length > 13))){
+            
+            anyErrors = true;
+
+            if(title.trim() == ""){
+                errorsDescription.push('Название продукта не может быть пустым.\n')
+            }
+            if(barcode.trim() == "" || !Number.isInteger(+barcode)){
+                errorsDescription.push('Штрихкод не может быть пустым или включать в себя какие-то символы кроме цифр.\n')
+            }
+            if(barcode.length < 13 || barcode.length > 13){
+                errorsDescription.push('Штрихкод состоит из 13 символов.\n')
+            }
+            setAnyErrors(true);
+            setErrorsDescription(errorsDescription);
+        }
+        else{
+            anyErrors = false;
+            setAnyErrors(false);
+            setErrorsDescription(null);
+        }
+
+        if(!anyErrors){
+            const barcodeObject = { 
+                title: title, 
+                barcode: barcode }
+    
+            fetch(`https://${localhost_url}/barcodes/save-barcode`, {
+                    method: "POST", 
+                    headers: {"Content-Type": "application/json"}, 
+                    body: JSON.stringify(barcodeObject),
+                })
+            .then(res => res.json())
+            .then(res => {
+                Alert.alert("Успешно", "Штрихкод был сохранён на сервере. Теперь при сканировании вы сможете получить название продукта автоматически.", [{text: "Вернуться"}] )
+                onChangeBarcode("");
+                onChangeTitle("");
             })
-        .then(res => res.json())
-        .then(res => {
-            onChangeBarcode("");
-            onChangeTitle("");
-        })
+            .catch(err => Alert.alert("Ошибка", "Что-то пошло не так.\nПроверьте подключение к интернету.\nВозможно, сервер недоступен.", [{text: "Вернуться"}] ))
+        }
+        else{
+            Alert.alert("Ошибка", "Не удалось добавить штрихкод на сервер.\nВернитесь назад и заполните все поля", [{text: "Назад"}] )
+        }
+
     }
    
     const newBarcodeView = (
-    <View>
+    <View style={styles.container}>
+        {anyErrors ? <Text style={{color: "red"}}>{errorsDescription.map(el => el)}</Text> : null}
     <TextInput
         style={styles.input}
         onChangeText={onChangeTitle}
-        placeholder="Item Name"
+        placeholder="Введите название продукта"
         defaultValue={title}
     />
     <TextInput
         style={styles.input}
         onChangeText={onChangeBarcode}
-        placeholder="Item barcode"
+        placeholder="Введите штрихкод продукта или отсканируйте его"
         defaultValue={barcode}
     />
-    <TouchableOpacity style={styles.button}>
-        <Text>
-            Сканировать штрихкод
-        </Text>
-    </TouchableOpacity>
-    <TouchableOpacity 
-        style={styles.button}
-        onPress={() => saveBarcode(title, barcode)}>
-        <Text>Add New Product!</Text>
-    </TouchableOpacity>
+    <View style={{flexDirection: 'row'}}>
+        <TouchableOpacity style={styles.button} onPress={() => props.navigation.navigate("Scan")}>
+            <Text style={{textAlign: 'center', fontWeight: 'bold'}}>
+                Сканировать штрихкод
+            </Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+            style={[styles.button, {width: '25%'}]}
+            onPress={() => saveBarcode(title, barcode)}>
+            <Text style={{textAlign: 'center', fontWeight: 'bold'}}>Добавить</Text>
+        </TouchableOpacity>
+    </View>
+    
     </View> )
 
 
@@ -80,20 +123,35 @@ const NewBarcode = (props) => {
 }
 
 const styles = StyleSheet.create({
+    container: {
+        fontFamily: 'Roboto',
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: 'white',
+    },
     input: {
-      height: 40,
-      margin: 12,
-      borderWidth: 1,
-      padding: 10,
+        height: 40,
+        width: "95%",
+        margin: 12,
+        borderWidth: 0.9,
+        borderRadius: 5,
+        padding: 10,
     },
     button: {
-        backgroundColor: "lightgray",
-        width: 190,
+        // backgroundColor: "lightgray",
+        shadowColor: 'black',
+        shadowOpacity: 0.26,
+        shadowOffset: { width: 0, height: 2},
+        shadowRadius: 10,
+        elevation: 5,
+        backgroundColor: 'white',
+        width: 180,
         height: 40,
-        margin: 5,
+        margin: 10,
         padding: 10,
-        borderRadius: 10
-    }
+        borderRadius: 5
+    },
   });
 
 export default NewBarcode;

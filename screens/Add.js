@@ -1,14 +1,12 @@
-import { StyleSheet, View, Text, TextInput, Button, TouchableOpacity, Alert } from "react-native";
-import { useState, useEffect } from "react";
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import { Picker } from '@react-native-picker/picker'
+import { useState, useEffect } from "react";
 
 import DateTimePicker from "@react-native-community/datetimepicker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RadioGroup from 'react-native-radio-buttons-group';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import moment from "moment/moment";
-
-
 
 const Add = (props) => {
 
@@ -33,7 +31,7 @@ const Add = (props) => {
     // Выбор срока годности или срока хранения //
     const [ modeId, setModeId] = useState("1");
 
-    // Задаём радио кнопки
+    // Задаём радио кнопки // 
     const radioButtonsData = [{
         id: '1', // acts as primary key, should be unique and non-empty string //
         label: 'Срок годности (до)',
@@ -66,6 +64,15 @@ const Add = (props) => {
             setErrorsDescription(false);
         })
     })
+
+    const deleteAllInfo = () => {
+        onChangeText("");
+        onChangeBarcode("");
+        props.navigation.reset({
+            index: 0,
+            routes: [{name: "New"}]
+        });
+    }
 
     // Функция обработки нажатия по радио кнопкам //
     const onChangeDateMode = (event) => {
@@ -177,18 +184,18 @@ const Add = (props) => {
                 />
             <Text style={{textAlign: 'center'}}>{barcode ? barcode : "Возможно, штрихкод для Вашего продукта есть в базе.\nПопробуйте отсканировать его."}</Text>
             <TouchableOpacity style={styles.button} onPress={() => props.navigation.navigate('Scan')}>
-                <Text>
+                <Text style={{textAlign: 'center', fontWeight: 'bold'}}>
                     Сканировать штрихкод
                 </Text>
             </TouchableOpacity>
-            <RadioGroup 
+            <RadioGroup
                 radioButtons={radioButtonsData} 
                 onPress={onChangeDateMode} 
-                containerStyle={{flexDirection: "row"}}
+                containerStyle={{flexDirection: "row", marginBottom: "2%"}}
             />
             {modeId == "1" 
             ? 
-                <View style={[styles.titleAndPhoto,]}>
+                <View style={[styles.titleAndPhoto, {borderColor: 'black', borderStyle: 'solid'}]}>
                 <Text style={{ marginRight: 10}}> Срок годности (до): {dateText}</Text>
                 <TouchableOpacity onPress={() => onDatePickerChange()}>
                     <Ionicons name="ios-calendar-sharp" size={30}/>   
@@ -208,11 +215,19 @@ const Add = (props) => {
             </>
             }
 
-            <TouchableOpacity style={[styles.button, {width: 100}]} onPress={() => newProduct(text, barcode, modeId == "1" ? dateInMillis : daysOrMonth == "day" ? moment().add(bestBeforeDaysOrMonth, 'days').format('x') : moment().add(bestBeforeDaysOrMonth, 'months').format('x'))}>
-                <Text style={{ textAlign: 'center' }}>
-                    Сохранить
-                </Text>
-            </TouchableOpacity>
+            <View style={{flexDirection: 'row'}}>
+                <TouchableOpacity style={[styles.button, {width: 100}]} onPress={() => newProduct(text, barcode, modeId == "1" ? dateInMillis : daysOrMonth == "day" ? moment().add(bestBeforeDaysOrMonth, 'days').format('x') : moment().add(bestBeforeDaysOrMonth, 'months').format('x'))}>
+                    <Text style={{ textAlign: 'center', fontWeight: 'bold' }}>
+                        Сохранить
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.button, {width: 100}]} onPress={() => deleteAllInfo()}>
+                    <Text style={{ textAlign: 'center', fontWeight: 'bold' }}>
+                        Сбросить
+                    </Text>
+                </TouchableOpacity>
+            </View>
+            
             {showDatePicker && <DateTimePicker testId="dateTimePicker" value={date} mode="date" display='default' onChange={onDatePickerChange} />}
         </View>
     )
@@ -221,19 +236,28 @@ const Add = (props) => {
 // Стили //
 const styles = StyleSheet.create({
     container: {
+        fontFamily: 'Roboto',
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
+        backgroundColor: 'white',
     },
     input: {
         height: 40,
-        width: "80%",
+        width: "95%",
         margin: 12,
-        borderWidth: 1,
+        borderWidth: 0.9,
+        borderRadius: 5,
         padding: 10,
     },
     button: {
-        backgroundColor: "lightgray",
+        // backgroundColor: "lightgray",
+        shadowColor: 'black',
+        shadowOpacity: 0.26,
+        shadowOffset: { width: 0, height: 2},
+        shadowRadius: 10,
+        elevation: 5,
+        backgroundColor: 'white',
         width: 180,
         height: 40,
         margin: 10,

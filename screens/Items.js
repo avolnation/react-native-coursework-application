@@ -34,18 +34,17 @@ const Item = ({ title, barcode, itemId, bestBeforeDate, image, rerenderItems, na
     <Pressable onPress={() => itemMenuHandler()}>
       <View style={styles.item}>
         <View style={styles["item-icon-style"]}>
-          {/* <Ionicons name="ios-basket" size={40} color="#404040"/> */}
           <>
-          {image ? <Image source={{uri: image, width: 40, height: 40}} /> : <Ionicons name="ios-basket" size={40} color="#404040"/>}
+          {image ? <Image source={{uri: image, width: 40, height: 40}} style={{borderRadius: 5}}/> : <Ionicons name="ios-basket" size={40} color="#404040"/>}
           </>
         </View>
-        <View style={{justifyContent: 'center'}}>
+        <View style={{justifyContent: 'center', width: '70%'}}>
           {
             barcode != "" 
             ?
             <>
-              <Text style={styles.title} numberOfLines={1}>{title}</Text>
-              <Text style={styles.barcode}>{barcode}</Text>
+              <Text style={[styles.title, {width: '40%'}]} numberOfLines={1}>{title}</Text>
+              <Text style={[styles.barcode, {width: '40%'}]}>{barcode}</Text>
             </>
             :
             <Text style={styles.title} numberOfLines={1}>{title}</Text>
@@ -83,6 +82,7 @@ const Items = (props) => {
   useEffect(() => {
     props.navigation.addListener('focus', () => {
       fetchDataFromAsyncStorage()
+      // console.log(dataToRender)
   })
 }, [])
 
@@ -115,9 +115,9 @@ const Items = (props) => {
       /> 
       : 
       <View style={styles.centered}>
-        <Pressable style={{alignItems: 'center'}} onPress={() => props.navigation.navigate("New")}>
+        <Pressable style={{alignItems: 'center'}} onPress={() => props.navigation.navigate("Add")}>
           <Ionicons name="ios-add-circle-outline" size={125}/>
-          <Text>Продуктов пока нет, добавьте новые.</Text>
+          <Text style={{fontWeight: 'bold'}}>Продуктов пока нет, добавьте новые.</Text>
         </Pressable>
       </View>}
     </SafeAreaView>)
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'flex-end',
     textAlignVertical: 'center',
-    fontSize: 25,
+    fontSize: 21,
   },
   item: {
     flexDirection: "row",
@@ -168,13 +168,13 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   title: {
-    fontSize: 19,
+    fontSize: 17,
     color: '#606060',
-    width: "100%",
+    width: "99%",
     fontWeight: 'bold',
   },
   barcode: {
-    fontSize: 16,
+    fontSize: 10,
     color: '#808080'
   },
   textRed: {
