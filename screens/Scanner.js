@@ -1,4 +1,4 @@
-import { ActivityIndicator, StyleSheet, Text, View, TouchableOpacity, Alert, } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View, TouchableOpacity, Alert, Pressable } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { useEffect, useState } from 'react';
@@ -28,27 +28,38 @@ const Scanner = (props) => {
         })
     })
   
-    useEffect(() => {
-      const getBarCodeScannerPermissions = async () => {
-        const { status } = await BarCodeScanner.requestPermissionsAsync();
-        setHasPermission(status === 'granted');
-      };
-  
+    useEffect(() => {  
       getBarCodeScannerPermissions();
     }, []);
+
+    const getBarCodeScannerPermissions = async () => {
+      const { status } = await BarCodeScanner.requestPermissionsAsync();
+      setHasPermission(status === 'granted');
+    };
 
     const createAlert = (type, data) => {
       if(type == 128 || type == 64 || type == 32){
         fetch(`http://${LOCALHOST_URL}/barcodes/get-info-by-barcode/${data}`)
         .then(res => res.json())
         .then(res => {
-          Alert.alert(res.message == "Info by barcode" ? "Штрихкод был найден на сервере" : "Такого штрихкода ещё нет на сервере", res.message == "Info by barcode" ? `Название продукта: ${res.body.title}, добавить это название к новому продукту?` : "На сервере нет информации о данном штрихкоде. Но, вы можете её добавить.", res.status == "found" ? [{text: "Добавить", onPress: () => props.navigation.navigate("Add", {barcode: res.body}), style: "cancel"}, {text: 'Вернуться', style: "default"}] : [{text: "Добавить", onPress: () => props.navigation.navigate("Barcodes", {barcode: data}), style: "cancel"}, {text: 'Вернуться', style: "default"}])
+          Alert.alert(
+            res.message == "Info by barcode" 
+            ? "Штрихкод был найден на сервере" 
+            : "Такого штрихкода ещё нет на сервере", 
+            res.message == "Info by barcode" 
+            ? `Название продукта: ${res.body.title}, добавить это название к новому продукту?` 
+            : "На сервере нет информации о данном штрихкоде. Но, вы можете её добавить.", res.status == "found" 
+            ? [
+              {text: "Добавить", onPress: () => props.navigation.navigate("Add", {barcode: res.body}), style: "cancel"}, 
+              {text: 'Вернуться', style: "default"}] 
+            : [
+              {text: "Добавить", onPress: () => props.navigation.navigate("Barcodes", {barcode: data}), style: "cancel"}, 
+              {text: 'Вернуться', style: "default"}])
         })
-        .catch(err => console.log(err))
+        .catch(err => Alert.alert("Ошибка", "Что-то пошло не так.\nПроверьте подключение к интернету.\nВозможно, сервер недоступен.", [{text: "Вернуться"}] ))
       }
     }
 
-  
     const handleBarCodeScanned = ({ type, data }) => {
       setScanned(true);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -56,16 +67,21 @@ const Scanner = (props) => {
     };
   
     if (hasPermission === null) {
-      return <>
-        <Ionicons name="ios-build-outline" size={124}></Ionicons>
-        <Text style={{fontWeight: 'bold'}}>Запрос на разрешение доступа к камере</Text>
-        </>;
+      return (
+      <View style={styles.container}>
+          <Ionicons name="ios-build-outline" size={124}></Ionicons>
+          <Text style={{fontWeight: 'bold'}}>Запрос на разрешение доступа к камере</Text>
+      </View>
+
+      )
     }
     if (hasPermission === false) {
-      return <>
-        <Ionicons name="ios-close-outline" size={124}></Ionicons>
-        <Text>Нет доступа к камере</Text>;
-        </>
+      return (
+        <View style={styles.container}>
+            <Ionicons name="ios-close-outline" size={124}/>
+            <Text style={{fontWeight: 'bold', textAlign: 'center'}}> Нет доступа к камере, попробуйте выдать соответствующее разрешение в настройках приложения </Text>
+        </View>
+      )
     }
 
     const scanAgain = (
@@ -73,7 +89,7 @@ const Scanner = (props) => {
             {scanned ? null : <BarCodeScanner
                 onBarCodeScanned={scanned ?  undefined : handleBarCodeScanned}
                 style={StyleSheet.absoluteFillObject}
-            />}  
+            />}
             {scanned && 
               <TouchableOpacity title={'Tap to Scan Again'} onPress={() => setScanned(false)}>
                 <Ionicons name="ios-refresh-outline" size={124}/>

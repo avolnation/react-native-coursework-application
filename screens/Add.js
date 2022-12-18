@@ -70,7 +70,7 @@ const Add = (props) => {
         onChangeBarcode("");
         props.navigation.reset({
             index: 0,
-            routes: [{name: "New"}]
+            routes: [{name: "Add"}]
         });
     }
 
@@ -150,7 +150,7 @@ const Add = (props) => {
             onChangeBarcode("");
             props.navigation.reset({
                 index: 0,
-                routes: [{name: "New"}]
+                routes: [{name: "Add"}]
             });
         } // Если есть ошибки то выводим Alert //
         else {
@@ -214,9 +214,12 @@ const Add = (props) => {
                 </Picker>
             </>
             }
-
             <View style={{flexDirection: 'row'}}>
-                <TouchableOpacity style={[styles.button, {width: 100}]} onPress={() => newProduct(text, barcode, modeId == "1" ? dateInMillis : daysOrMonth == "day" ? moment().add(bestBeforeDaysOrMonth, 'days').format('x') : moment().add(bestBeforeDaysOrMonth, 'months').format('x'))}>
+                <TouchableOpacity style={[styles.button, {width: 100}]} onPress={() => newProduct(text, barcode, modeId == "1" 
+                ? dateInMillis 
+                : daysOrMonth == "day" 
+                ? moment().add(bestBeforeDaysOrMonth, 'days').format('x') 
+                : moment().add(bestBeforeDaysOrMonth, 'months').format('x'))}>
                     <Text style={{ textAlign: 'center', fontWeight: 'bold' }}>
                         Сохранить
                     </Text>
@@ -227,7 +230,6 @@ const Add = (props) => {
                     </Text>
                 </TouchableOpacity>
             </View>
-            
             {showDatePicker && <DateTimePicker testId="dateTimePicker" value={date} mode="date" display='default' onChange={onDatePickerChange} />}
         </View>
     )

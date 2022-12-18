@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Button, FlatList, StatusBar, SafeAreaView, Image, Modal, TouchableWithoutFeedback, Pressable, TouchableOpacity, Alert, PermissionsAndroid, } from 'react-native';
+import { StyleSheet, Text, View, FlatList, Image, Pressable, Alert, PermissionsAndroid, } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from 'react';
@@ -35,7 +35,11 @@ const Item = ({ title, barcode, itemId, bestBeforeDate, image, rerenderItems, na
       <View style={styles.item}>
         <View style={styles["item-icon-style"]}>
           <>
-          {image ? <Image source={{uri: image, width: 40, height: 40}} style={{borderRadius: 5}}/> : <Ionicons name="ios-basket" size={40} color="#404040"/>}
+          {image 
+          ? <Image 
+              source={{uri: image, width: 40, height: 40}} 
+              style={{borderRadius: 5}}/> 
+          : <Ionicons name="ios-basket" size={40} color="#404040"/>}
           </>
         </View>
         <View style={{justifyContent: 'center', width: '70%'}}>
@@ -52,7 +56,10 @@ const Item = ({ title, barcode, itemId, bestBeforeDate, image, rerenderItems, na
 
         </View>
         <View style={styles.daysLeft}>
-          <Text style={[styles.daysLeft, dateToDays(bestBeforeDate) < 7 ? styles.textRed  : styles.textGreen]}>{dateToDays(bestBeforeDate) < 0 ? "!!!" : dateToDays(bestBeforeDate)}</Text>
+          <Text style={[styles.daysLeft, 
+            dateToDays(bestBeforeDate) < 7 
+            ? styles.textRed 
+            : styles.textGreen]}>{dateToDays(bestBeforeDate) < 0 ? "!!!" : dateToDays(bestBeforeDate)}</Text>
         </View>
       </View> 
       </Pressable> 
@@ -105,12 +112,20 @@ const Items = (props) => {
   }, [])
 
   const renderDefaultScreen = (props) => {
-    return (<SafeAreaView style={styles.container}>
+    return (
+    <View style={styles.container}>
       { dataToRender.length >= 1 
       ? 
       <FlatList
         data={dataToRender}
-        renderItem={({item}) => <Item title={item.title} barcode={item.barcode} itemId={item.id} bestBeforeDate={item.bestBeforeDate} image={item.image} rerenderItems={() => fetchDataFromAsyncStorage()} navigateToEditPage={() => props.navigation.navigate('edit_product', {item: {...item}})}/>}
+        renderItem={({item}) => <Item 
+                                  title={item.title} 
+                                  barcode={item.barcode} 
+                                  itemId={item.id} 
+                                  bestBeforeDate={item.bestBeforeDate} 
+                                  image={item.image} 
+                                  rerenderItems={() => fetchDataFromAsyncStorage()} 
+                                  navigateToEditPage={() => props.navigation.navigate('edit_product', {item: {...item}})}/>}
         keyExtractor={item => item.id}
       /> 
       : 
@@ -120,7 +135,7 @@ const Items = (props) => {
           <Text style={{fontWeight: 'bold'}}>Продуктов пока нет, добавьте новые.</Text>
         </Pressable>
       </View>}
-    </SafeAreaView>)
+    </View>)
   }
 
   const NavigationStack = createNativeStackNavigator();

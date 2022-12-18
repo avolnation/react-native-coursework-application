@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Scanner from './screens/Scanner';
@@ -8,21 +7,11 @@ import Items from './screens/Items';
 import Add from './screens/Add';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import NewBarcode from './screens/NewBarcode';
-import Auth from './screens/Auth';
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
 
-  const [ loggedIn, setLoggedIn ] = useState(false);
-  const [ userToken, setUserToken ] = useState("");
-
-
-  const logInHandler = () => {
-    setLoggedIn(true);
-  }
-
-  
   return ( 
       <NavigationContainer>
       <Tab.Navigator
@@ -51,7 +40,6 @@ export default function App() {
           tabBarActiveTintColor: '#006EDB',
           tabBarInactiveTintColor: '#9C9C9C',
           headerTitleAlign: "center"
-          // headerShown: false
           
         })}>
         <Tab.Screen

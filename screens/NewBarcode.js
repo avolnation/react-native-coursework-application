@@ -1,12 +1,9 @@
-import { StyleSheet, View, Text, TextInput, Button, TouchableOpacity, Alert } from "react-native";
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import { useState, useEffect } from "react";
 
 const NewBarcode = (props) => {
 
     const localhost_url = "react-node-api.clefer.ru";
-
-    console.log(typeof props.route.params);
-
 
     const [isActive, setIsActive] = useState(false);
     const [barcode, onChangeBarcode] = useState("");
@@ -75,6 +72,10 @@ const NewBarcode = (props) => {
                 Alert.alert("Успешно", "Штрихкод был сохранён на сервере. Теперь при сканировании вы сможете получить название продукта автоматически.", [{text: "Вернуться"}] )
                 onChangeBarcode("");
                 onChangeTitle("");
+                props.navigation.reset({
+                    index: 0,
+                    routes: [{name: "Barcodes"}]
+                });
             })
             .catch(err => Alert.alert("Ошибка", "Что-то пошло не так.\nПроверьте подключение к интернету.\nВозможно, сервер недоступен.", [{text: "Вернуться"}] ))
         }

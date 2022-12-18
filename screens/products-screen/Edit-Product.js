@@ -176,7 +176,9 @@ const EditProduct = (props) => {
         
     return (
         <View style={styles.container}>
-            {anyErrors ? <Text style={{color: "red"}}>{errorsDescription.map(el => el)}</Text> : null}
+            {anyErrors 
+            ? <Text style={{color: "red"}}>{errorsDescription.map(el => el)}</Text> 
+            : null}
             <View style={styles.titleAndPhoto}>
                 <TextInput
                     style={styles.input}
@@ -187,7 +189,9 @@ const EditProduct = (props) => {
                 {!image && <TouchableOpacity>
                     <Ionicons name="ios-camera-outline" size={50} onPress={pickImage}/>
                 </TouchableOpacity>}
-                {image && <TouchableOpacity onPress={pickImage}><Image source={{ uri: image }} style={{ width: 50, height: 50 }}/></TouchableOpacity>}
+                {image && <TouchableOpacity onPress={pickImage}>
+                    <Image source={{ uri: image }} style={{ width: 50, height: 50 }}/>
+                    </TouchableOpacity>}
             </View>
             <RadioGroup
                 radioButtons={radioButtonsData} 
@@ -209,25 +213,33 @@ const EditProduct = (props) => {
                     onChangeText={setBestBeforeDaysOrMonth}
                     placeholder="Срок хранения"
                     defaultValue={bestBeforeDaysOrMonth}/> 
-                <Picker style={{height: 40, width: "30%"}} mode="dialog" selectedValue={daysOrMonth} onValueChange={(value) => setDaysOrMonth(value)}>
+                <Picker style={{height: 40, width: "30%"}} mode="dialog" 
+                        selectedValue={daysOrMonth} 
+                        onValueChange={(value) => setDaysOrMonth(value)}>
                     <Picker.Item key="1" label="сут." value="day"></Picker.Item>
                     <Picker.Item key="2" label="мес." value="month"></Picker.Item>
                 </Picker>
             </>
             }
             <View style={styles.controls}>
-                <TouchableOpacity style={styles.button} onPress={() => editProduct(id, text, barcode, dateInMillis, image) }>
+                <TouchableOpacity style={styles.button} 
+                onPress={() => editProduct(id, text, barcode, dateInMillis, image) }>
                     <Text style={styles.textInButton}>
                         Сохранить
                     </Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => {props.route.params.refresh; props.navigation.goBack()}}>
+                <TouchableOpacity style={styles.button} 
+                onPress={() => {props.route.params.refresh; props.navigation.goBack()}}>
                     <Text style={styles.textInButton}>
                         Назад
                     </Text>
                 </TouchableOpacity>
             </View>
-            {showDatePicker && <DateTimePicker testId="dateTimePicker" value={date} mode="date" display='default' onChange={onDatePickerChange} />}
+            {showDatePicker && <DateTimePicker testId="dateTimePicker" 
+                                                value={date} 
+                                                mode="date" 
+                                                display='default' 
+                                                onChange={onDatePickerChange} />}
         </View>
     )
 }
@@ -238,7 +250,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: 'white'
+        backgroundColor: 'white '
     },
     input: {
       height: 40,
